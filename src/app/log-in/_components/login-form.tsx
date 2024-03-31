@@ -6,9 +6,8 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import { FC, useTransition } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z, ZodType } from 'zod'
-import { FadeIn } from 'src/components/fade-in'
-
-import { signinAction, SigninFormData } from 'src/actions/sign-in'
+import { signinAction, SigninFormData } from '~/actions/sign-in'
+import { FadeIn } from '~/components/fade-in'
 
 export const SigninSchema: ZodType<SigninFormData> = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
