@@ -1,6 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import '@radix-ui/colors/gray.css';
+@import '@radix-ui/colors/blue.css';
+@import '@radix-ui/colors/red.css';
+@import '@radix-ui/colors/indigo.css';
+@import '@radix-ui/themes/tokens/base.css';
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -17,7 +19,7 @@
 }
 
 body {
- width: 100%;
+  width: 100%;
 }
 
 @layer utilities {
