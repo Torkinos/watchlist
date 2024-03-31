@@ -2,8 +2,9 @@ import { NextPage } from 'next'
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { permanentRedirect } from 'next/navigation'
 import { cookies } from 'next/headers'
-import { Box, Flex, Heading, Text } from '@radix-ui/themes'
+import { Box, Flex, Text } from '@radix-ui/themes'
 import { Database } from 'src/__generated__/supabase'
+import { Logo } from '~/components/logo'
 import { LogInForm } from './_components/login-form'
 
 const LogIn: NextPage = async () => {
@@ -40,19 +41,7 @@ const LogIn: NextPage = async () => {
         >
           <Box p="6">
             <Box pt="6">
-              <Heading
-                as="h1"
-                size="9"
-                align="center"
-                highContrast
-                weight="bold"
-              >
-                Watchlist
-              </Heading>
-
-              <Text as="p" size="3" align="center" color="gray">
-                Anime | Movie | TV Show
-              </Text>
+              <Logo size="large" headingAs="h1" />
             </Box>
 
             <Box p="6"></Box>

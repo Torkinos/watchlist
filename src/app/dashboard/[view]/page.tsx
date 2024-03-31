@@ -2,7 +2,7 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { NextPage } from 'next'
 import { cookies } from 'next/headers'
 import { permanentRedirect } from 'next/navigation'
-import { DashboardPageView } from './_enums/dashboard-page-view.enum'
+import { DashboardView } from '../_components/dashboard-view'
 
 const Home: NextPage = async () => {
   const cookieStore = cookies()
@@ -17,7 +17,11 @@ const Home: NextPage = async () => {
     permanentRedirect('/log-in')
   }
 
-  permanentRedirect(`/dashboard/${DashboardPageView.DISCOVER}`)
+  return (
+    <main>
+      <DashboardView />
+    </main>
+  )
 }
 
 export default Home
