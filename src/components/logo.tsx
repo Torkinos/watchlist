@@ -41,7 +41,7 @@ export const Logo: FC<LogoProps> = ({ headingAs = 'h2', size = 'medium' }) => {
         Watchlist
       </Heading>
 
-      <Text as="p" size={getTextSize(size)} align="center" color="gray">
+      <Text as="p" size={getTextSize(size)} align="center">
         Anime | Movie | TV Show
       </Text>
     </Box>

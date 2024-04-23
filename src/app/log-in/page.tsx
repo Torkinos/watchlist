@@ -50,8 +50,7 @@ const LogIn: NextPage = async () => {
           </Box>
 
           <Box py="4" px="6">
-            <Text as="p" size="3" align="center" color="gray">
-              {/* TODO: fix color */}
+            <Text as="p" size="3" align="center">
               Who needs a social life when there are so many things to watch?
             </Text>
           </Box>
