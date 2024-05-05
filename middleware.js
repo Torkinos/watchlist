@@ -9,7 +9,9 @@ export async function middleware(req) {
 
   // Refresh session if expired - required for Server Components
   const user = await supabase.auth.getUser()
+
   console.log(user)
+
   return res
 }
 
