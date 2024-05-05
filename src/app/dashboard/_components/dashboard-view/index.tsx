@@ -3,24 +3,29 @@
 import { FC, useCallback, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { Box, Card, Flex, Grid, Heading } from '@radix-ui/themes'
+import { Box, Card, Flex, Grid, Heading, IconButton } from '@radix-ui/themes'
 import debounce from 'lodash.debounce'
+import { PlusCircledIcon } from '@radix-ui/react-icons'
 import { useQueryParams } from '~/hooks/useQueryParams'
-import { fetchMovies } from '~/services/watchlistService'
+import { addToWatchList, fetchMovies } from '~/services/watchlistService'
+import { ACCENT_COLOR } from '~/constants/theme'
+
+import { GetMoviesTvResponse, TMDBMovie } from '~/services/tmdbService'
+import { WatchListStatus } from '~/app/api/movies-tv/[id]/watchlist/enums/watchListStatus.enum'
+import { WatchListType } from '~/app/api/movies-tv/[id]/watchlist/enums/watchListType.enum'
 import { Header } from './header'
 import { SearchField } from './searchField'
 import { DashboardPageView } from '../../_enums/dashboard-page-view.enum'
+import { QueryParams } from '../../interfaces/queryParams.interfce'
 
 interface DashboardViewProps {
-  movies: any
+  movies: GetMoviesTvResponse
 }
 
 export const DashboardView: FC<DashboardViewProps> = ({ movies }) => {
   const params = useParams()
 
-  const { updateQueryParams, queryParams } = useQueryParams<{
-    search?: string
-  }>()
+  const { updateQueryParams, queryParams } = useQueryParams<QueryParams>()
 
   const router = useRouter()
 
@@ -33,6 +38,7 @@ export const DashboardView: FC<DashboardViewProps> = ({ movies }) => {
 
     try {
       const searchResults = await fetchMovies({ searchPattern })
+      console.log(searchResults)
 
       setMoviesState(searchResults)
     } catch (error) {
@@ -46,6 +52,19 @@ export const DashboardView: FC<DashboardViewProps> = ({ movies }) => {
     }, 500),
     []
   )
+
+  const onAddToWatchList = async (movie: TMDBMovie) => {
+    await addToWatchList(movie.id, {
+      status: WatchListStatus.WATCHLIST,
+      title: movie.title,
+      posterPath: movie.poster_path,
+      releaseDate: movie.release_date,
+      rating: movie.vote_average,
+      type: WatchListType.MOVIE,
+      genreIds: movie.genre_ids.map(String),
+      tmdbId: movie.id,
+    })
+  }
 
   useEffect(() => {
     if (queryParams?.search) {
@@ -84,7 +103,7 @@ export const DashboardView: FC<DashboardViewProps> = ({ movies }) => {
         pt={{ initial: '0', md: '5' }}
         columns={{ initial: '1', md: '2', lg: '3', xl: '5' }}
       >
-        {moviesState.results?.map((movie: any) => {
+        {moviesState.results?.map((movie) => {
           return (
             <Card key={movie.id} variant="ghost">
               <Box position="relative" width="100%" pt="150%">
@@ -101,6 +120,17 @@ export const DashboardView: FC<DashboardViewProps> = ({ movies }) => {
                   alt={movie.title}
                   fill
                 />
+              </Box>
+
+              <Box position={'absolute'} top={'4'} right={'4'}>
+                <IconButton
+                  size="1"
+                  variant="solid"
+                  color={ACCENT_COLOR}
+                  onClick={() => onAddToWatchList(movie)}
+                >
+                  <PlusCircledIcon height="16" width="16" />
+                </IconButton>
               </Box>
 
               <Box pt="2">

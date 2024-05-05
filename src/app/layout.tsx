@@ -1,5 +1,6 @@
 import { Inter } from 'next/font/google'
 import { Theme } from '@radix-ui/themes'
+import { ACCENT_COLOR, DEFAULT_APPEARANCE, GRAY_COLOR } from '~/constants/theme'
 import type { Metadata } from 'next'
 import '@radix-ui/themes/styles.css'
 import './styles/globals.css'
@@ -21,7 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Theme appearance="dark" accentColor="indigo" grayColor="slate">
+        <Theme
+          appearance={DEFAULT_APPEARANCE}
+          accentColor={ACCENT_COLOR}
+          grayColor={GRAY_COLOR}
+        >
           {children}
         </Theme>
       </body>
