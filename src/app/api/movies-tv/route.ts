@@ -1,9 +1,27 @@
+import { createServerActionClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
+import { Database } from '~/__generated__/supabase'
 import { fetchPopularMovies, searchMovies } from '~/services/tmdbService'
 
 export const GET = async (request: NextRequest) => {
   try {
     const searchPattern = request.nextUrl.searchParams.get('searchPattern')
+
+    const supabase = createServerActionClient<Database>({
+      cookies: () => cookies(),
+    })
+
+    const user = await supabase.auth.getUser()
+
+    if (!user) {
+      return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), {
+        status: 401,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+    }
 
     if (searchPattern?.length) {
       const searchResults = await searchMovies(searchPattern)

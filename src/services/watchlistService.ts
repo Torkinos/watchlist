@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { AddToWatchListBodyParams } from '~/app/api/movies-tv/[id]/watchlist/interfaces/watclist.interface'
+import { Database } from '~/__generated__/supabase'
+import { AddToWatchListBodyParams } from '~/app/api/movies-tv/watchlist/interfaces/watclist.interface'
 
 interface FetchMoviesParams {
   searchPattern?: string
@@ -21,7 +22,13 @@ export const addToWatchList = async (
   id: number,
   params: AddToWatchListBodyParams
 ) => {
-  console.log('params', params, id)
+  await axios.post(`/api/movies-tv/watchlist/${id}`, params)
+}
 
-  await axios.post(`/api/movies-tv/${id}/watchlist`, params)
+export const fetchWatchList = async () => {
+  const response = await axios.get<
+    Database['public']['Tables']['user_watchlist']['Row'][]
+  >(`/api/movies-tv/watchlist`)
+
+  return response.data
 }

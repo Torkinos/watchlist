@@ -9,8 +9,4 @@ export const DASHBOARD_TABS = [
     label: 'Watchlist',
     value: DashboardPageView.WATCHLIST,
   },
-  {
-    label: 'History',
-    value: DashboardPageView.HISTORY,
-  },
 ]

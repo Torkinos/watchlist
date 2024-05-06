@@ -1,18 +1,18 @@
 'use client'
 
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Box, Card, Flex, Grid, Heading, IconButton } from '@radix-ui/themes'
 import debounce from 'lodash.debounce'
-import { PlusCircledIcon } from '@radix-ui/react-icons'
+import { PlusCircledIcon, MinusCircledIcon } from '@radix-ui/react-icons'
 import { useQueryParams } from '~/hooks/useQueryParams'
 import { addToWatchList, fetchMovies } from '~/services/watchlistService'
 import { ACCENT_COLOR } from '~/constants/theme'
-
 import { GetMoviesTvResponse, TMDBMovie } from '~/services/tmdbService'
-import { WatchListStatus } from '~/app/api/movies-tv/[id]/watchlist/enums/watchListStatus.enum'
-import { WatchListType } from '~/app/api/movies-tv/[id]/watchlist/enums/watchListType.enum'
+import { WatchListType } from '~/app/api/movies-tv/watchlist/enums/watchListType.enum'
+import { WatchListStatus } from '~/app/api/movies-tv/watchlist/enums/watchListStatus.enum'
+import { WatchListItem } from '~/services/supabaseService/fetchWatchList/interfaces/fetchWatchList.interface'
 import { Header } from './header'
 import { SearchField } from './searchField'
 import { DashboardPageView } from '../../_enums/dashboard-page-view.enum'
@@ -20,9 +20,13 @@ import { QueryParams } from '../../interfaces/queryParams.interfce'
 
 interface DashboardViewProps {
   movies: GetMoviesTvResponse
+  watchlist: WatchListItem[]
 }
 
-export const DashboardView: FC<DashboardViewProps> = ({ movies }) => {
+export const DashboardView: FC<DashboardViewProps> = ({
+  movies,
+  watchlist,
+}) => {
   const params = useParams()
 
   const { updateQueryParams, queryParams } = useQueryParams<QueryParams>()
@@ -32,6 +36,19 @@ export const DashboardView: FC<DashboardViewProps> = ({ movies }) => {
   const [moviesState, setMoviesState] = useState(movies)
 
   const view = (params.view as DashboardPageView) || DashboardPageView.DISCOVER
+
+  const watchlistIdsObj = useMemo<Record<string, WatchListStatus>>(() => {
+    return watchlist.reduce<Record<string, WatchListStatus>>((acc, item) => {
+      if (!item.tmdbId) {
+        return acc
+      }
+      const newAcc = { ...acc }
+
+      newAcc[item.tmdbId] = item.status
+
+      return newAcc
+    }, {})
+  }, [watchlist])
 
   const onSearch = async (searchPattern: string) => {
     updateQueryParams({ search: searchPattern })
@@ -104,6 +121,8 @@ export const DashboardView: FC<DashboardViewProps> = ({ movies }) => {
         columns={{ initial: '1', md: '2', lg: '3', xl: '5' }}
       >
         {moviesState.results?.map((movie) => {
+          const watchlistStatus = watchlistIdsObj[movie.id]
+
           return (
             <Card key={movie.id} variant="ghost">
               <Box position="relative" width="100%" pt="150%">
@@ -119,6 +138,7 @@ export const DashboardView: FC<DashboardViewProps> = ({ movies }) => {
                   src={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
                   alt={movie.title}
                   fill
+                  objectFit="cover"
                 />
               </Box>
 
@@ -129,7 +149,11 @@ export const DashboardView: FC<DashboardViewProps> = ({ movies }) => {
                   color={ACCENT_COLOR}
                   onClick={() => onAddToWatchList(movie)}
                 >
-                  <PlusCircledIcon height="16" width="16" />
+                  {watchlistStatus ? (
+                    <MinusCircledIcon height="16" width="16" />
+                  ) : (
+                    <PlusCircledIcon height="16" width="16" />
+                  )}
                 </IconButton>
               </Box>
 
