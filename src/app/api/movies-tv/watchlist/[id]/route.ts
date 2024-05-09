@@ -46,40 +46,32 @@ export const POST = async (request: NextRequest, { params }: RequestParams) => {
       const watchingIds = watchlistItemData.watching_ids || []
       const watchedIds = watchlistItemData.watched_ids || []
 
-      const watchlistIdsIndex = watchlistIds.indexOf(user.data.user.id)
-      const watchingIdsIndex = watchingIds.indexOf(user.data.user.id)
-      const watchedIdsIndex = watchedIds.indexOf(user.data.user.id)
+      const newWatchlistIds = watchlistIds.filter(
+        (id) => id !== user.data.user?.id
+      )
+      const newWatchingIds = watchingIds.filter(
+        (id) => id !== user.data.user?.id
+      )
+      const newWatchedIds = watchedIds.filter((id) => id !== user.data.user?.id)
 
       if (res.status === WatchListStatus.WATCHLIST) {
-        if (watchlistIdsIndex === -1) {
-          watchlistIds.push(user.data.user.id)
-        } else {
-          watchlistIds.splice(watchlistIdsIndex, 1)
-        }
+        newWatchlistIds.push(user.data.user.id)
       }
 
       if (res.status === WatchListStatus.WATCHING) {
-        if (watchingIdsIndex === -1) {
-          watchingIds.push(user.data.user.id)
-        } else {
-          watchingIds.splice(watchingIdsIndex, 1)
-        }
+        newWatchingIds.push(user.data.user.id)
       }
 
       if (res.status === WatchListStatus.WATCHED) {
-        if (watchedIdsIndex === -1) {
-          watchedIds.push(user.data.user.id)
-        } else {
-          watchedIds.splice(watchedIdsIndex, 1)
-        }
+        newWatchedIds.push(user.data.user.id)
       }
 
       const supabaseResponse = await supabase
         .from('user_watchlist')
         .update({
-          watchlist_ids: watchlistIds,
-          watching_ids: watchingIds,
-          watched_ids: watchedIds,
+          watchlist_ids: newWatchlistIds,
+          watching_ids: newWatchingIds,
+          watched_ids: newWatchedIds,
         })
         .eq('tmdb_id', id)
 

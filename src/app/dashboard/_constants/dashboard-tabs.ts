@@ -1,4 +1,4 @@
-import { DashboardPageView } from '../_enums/dashboard-page-view.enum'
+import { DashboardPageView } from '../_enums/dashboardPageView.enum'
 
 export const DASHBOARD_TABS = [
   {

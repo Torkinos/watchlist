@@ -1,28 +1,15 @@
 import { Box, Button, Flex, Tabs } from '@radix-ui/themes'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { useRouter } from 'next/navigation'
 import React, { FC, ReactNode } from 'react'
-import { Database } from '~/__generated__/supabase'
+import Link from 'next/link'
 import { Logo } from '~/components/logo'
-import { DashboardPageView } from '../../_enums/dashboard-page-view.enum'
-import { DASHBOARD_TABS } from '../../_constants/dashboard-tabs'
+import { DASHBOARD_TABS } from '../_constants/dashboard-tabs'
+import { DashboardPageView } from '../_enums/dashboardPageView.enum'
 
 interface HeaderProps {
   activeTab: DashboardPageView
-  onTabSelect: (tab: DashboardPageView) => void
 }
 
-export const Header: FC<HeaderProps> = ({ activeTab, onTabSelect }) => {
-  const router = useRouter()
-
-  const supabase = createClientComponentClient<Database>()
-
-  const signOut = async () => {
-    await supabase.auth.signOut()
-
-    router.push('/log-in')
-  }
-
+export const Header: FC<HeaderProps> = ({ activeTab }) => {
   const showOnTablet = (element: ReactNode) => {
     return <Box display={{ initial: 'block', md: 'none' }}>{element}</Box>
   }
@@ -38,9 +25,11 @@ export const Header: FC<HeaderProps> = ({ activeTab, onTabSelect }) => {
           <Flex align="center" justify="between">
             <Logo size="small" />
 
-            <Button variant="soft" color="gray" onClick={signOut}>
-              Logout
-            </Button>
+            <Link href={'/log-out'}>
+              <Button variant="soft" color="gray">
+                Logout
+              </Button>
+            </Link>
           </Flex>
         )}
 
@@ -51,22 +40,20 @@ export const Header: FC<HeaderProps> = ({ activeTab, onTabSelect }) => {
             <Tabs.List>
               {DASHBOARD_TABS.map((tab) => {
                 return (
-                  <Tabs.Trigger
-                    key={tab.value}
-                    value={tab.value}
-                    onClick={() => onTabSelect(tab.value)}
-                  >
-                    {tab.label}
-                  </Tabs.Trigger>
+                  <Link key={tab.value} href={`/dashboard/${tab.value}`}>
+                    <Tabs.Trigger value={tab.value}>{tab.label}</Tabs.Trigger>
+                  </Link>
                 )
               })}
             </Tabs.List>
           </Tabs.Root>
 
           {showOnDesktop(
-            <Button variant="soft" color="gray" onClick={signOut}>
-              Logout
-            </Button>
+            <Link href={'/log-out'}>
+              <Button variant="soft" color="gray">
+                Logout
+              </Button>
+            </Link>
           )}
         </Flex>
       </Box>
