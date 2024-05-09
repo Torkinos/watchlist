@@ -3,7 +3,10 @@ import { cookies } from 'next/headers'
 import { Database } from '~/__generated__/supabase'
 import { WatchListStatus } from '~/app/api/movies-tv/watchlist/enums/watchListStatus.enum'
 import { WatchListType } from '~/app/api/movies-tv/watchlist/enums/watchListType.enum'
-import { FetchWatchListResponse } from './interfaces/fetchWatchList.interface'
+import {
+  FetchWatchListParams,
+  FetchWatchListResponse,
+} from './interfaces/fetchWatchList.interface'
 
 const getStatusByWatclistItemFields = (
   watchlistItem: Database['public']['Tables']['user_watchlist']['Row'],
@@ -26,7 +29,9 @@ const getStatusByWatclistItemFields = (
   return WatchListStatus.WATCHLIST
 }
 
-export const fetchWatchList = async (): Promise<FetchWatchListResponse> => {
+export const fetchWatchList = async ({
+  searchPattern,
+}: FetchWatchListParams = {}): Promise<FetchWatchListResponse> => {
   const supabase = createServerActionClient<Database>({
     cookies: () => cookies(),
   })
@@ -37,12 +42,17 @@ export const fetchWatchList = async (): Promise<FetchWatchListResponse> => {
     throw new Error('Unauthorized')
   }
 
-  const watchlistData = await supabase
-    .from('user_watchlist')
-    .select()
-    .or(
-      `watchlist_ids.cs.{${user.data.user.id}},watching_ids.cs.{${user.data.user.id}},watched_ids.cs.{${user.data.user.id}}`
-    )
+  let query = supabase.from('user_watchlist').select()
+
+  if (searchPattern?.length) {
+    query = query.ilike('title', `%${searchPattern}%`)
+  }
+
+  query = query.or(
+    `watchlist_ids.cs.{${user.data.user.id}},watching_ids.cs.{${user.data.user.id}},watched_ids.cs.{${user.data.user.id}}`
+  )
+
+  const watchlistData = await query
 
   return {
     data:

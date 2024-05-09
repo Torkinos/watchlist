@@ -1,6 +1,7 @@
 import { createServerActionClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { Database } from '~/__generated__/supabase'
 import { AddToWatchListBodyParams } from '../interfaces/watclist.interface'
 import { WatchListStatus } from '../enums/watchListStatus.enum'
@@ -85,6 +86,8 @@ export const POST = async (request: NextRequest, { params }: RequestParams) => {
           },
         })
       }
+
+      revalidatePath('/dashboard/watchlist')
 
       return new NextResponse(JSON.stringify(supabaseResponse.data), {
         status: 200,

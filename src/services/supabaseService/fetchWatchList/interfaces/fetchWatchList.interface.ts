@@ -17,3 +17,7 @@ export interface WatchListItem {
 export interface FetchWatchListResponse {
   data: WatchListItem[]
 }
+
+export interface FetchWatchListParams {
+  searchPattern?: string
+}

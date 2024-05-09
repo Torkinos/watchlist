@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useCallback, useEffect } from 'react'
+import { FC, useCallback } from 'react'
 import { Box, Flex, Grid } from '@radix-ui/themes'
 import debounce from 'lodash.debounce'
 import { useQueryParams } from '~/hooks/useQueryParams'
@@ -26,12 +26,6 @@ export const Watchlist: FC<WatchlistProps> = ({ watchlist }) => {
     }, 500),
     []
   )
-
-  useEffect(() => {
-    if (queryParams?.search) {
-      onSearch(queryParams.search)
-    }
-  }, [queryParams])
 
   return (
     <div>

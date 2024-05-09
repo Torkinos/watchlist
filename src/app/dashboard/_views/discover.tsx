@@ -1,16 +1,14 @@
 'use client'
 
-import { FC, useCallback, useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { FC, useCallback } from 'react'
 import { Box, Flex, Grid } from '@radix-ui/themes'
 import debounce from 'lodash.debounce'
 import { useQueryParams } from '~/hooks/useQueryParams'
-import { addToWatchList, fetchMovies } from '~/services/watchlistService'
+import { addToWatchList } from '~/services/watchlistService'
 import { GetMoviesTvResponse, TMDBMovie } from '~/services/tmdbService'
 import { WatchListType } from '~/app/api/movies-tv/watchlist/enums/watchListType.enum'
 import { WatchListStatus } from '~/app/api/movies-tv/watchlist/enums/watchListStatus.enum'
 import { QueryParams } from '../interfaces/queryParams.interfce'
-import { DashboardPageView } from '../_enums/dashboardPageView.enum'
 import { SearchField } from '../_components/searchField'
 import { MovieCard } from '../_components/MovieCard'
 
@@ -19,26 +17,10 @@ interface DiscoverProps {
 }
 
 export const Discover: FC<DiscoverProps> = ({ movies }) => {
-  const params = useParams()
-
   const { updateQueryParams, queryParams } = useQueryParams<QueryParams>()
-
-  const router = useRouter()
-
-  const [moviesState, setMoviesState] = useState(movies)
-
-  const view = (params.view as DashboardPageView) || DashboardPageView.DISCOVER
 
   const onSearch = async (searchPattern: string) => {
     updateQueryParams({ search: searchPattern })
-
-    try {
-      const searchResults = await fetchMovies({ searchPattern })
-
-      setMoviesState(searchResults)
-    } catch (error) {
-      console.error(error)
-    }
   }
 
   const handleChange = useCallback(
@@ -63,12 +45,6 @@ export const Discover: FC<DiscoverProps> = ({ movies }) => {
       tmdbId: movie.id,
     })
   }
-
-  useEffect(() => {
-    if (queryParams?.search) {
-      onSearch(queryParams.search)
-    }
-  }, [queryParams])
 
   return (
     <div>
@@ -96,7 +72,7 @@ export const Discover: FC<DiscoverProps> = ({ movies }) => {
         pt={{ initial: '0', md: '5' }}
         columns={{ initial: '1', md: '2', lg: '3', xl: '5' }}
       >
-        {moviesState.results?.map((movie) => {
+        {movies?.results?.map((movie) => {
           return (
             <MovieCard
               key={movie.id}

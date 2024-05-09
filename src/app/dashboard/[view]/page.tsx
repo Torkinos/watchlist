@@ -15,7 +15,9 @@ const Home: NextPage<{
     searchParams.search?.length
       ? searchMovies(searchParams.search)
       : fetchPopularMovies(),
-    fetchWatchList(),
+    fetchWatchList({
+      searchPattern: searchParams.search,
+    }),
   ])
 
   return (
