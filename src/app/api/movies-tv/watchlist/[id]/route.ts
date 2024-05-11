@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 import { Database } from '~/__generated__/supabase'
-import { AddToWatchListBodyParams } from '../interfaces/watclist.interface'
+import { WatchlistItem } from '~/services/interfaces/watchlistItem.interface'
 import { WatchListStatus } from '../enums/watchListStatus.enum'
 
 interface Params {
@@ -17,7 +17,7 @@ interface RequestParams {
 export const POST = async (request: NextRequest, { params }: RequestParams) => {
   const id = params.id
 
-  const res = (await request.json()) as AddToWatchListBodyParams
+  const res = (await request.json()) as WatchlistItem
 
   try {
     const supabase = createServerActionClient<Database>({

@@ -1,5 +1,6 @@
 import { NextPage } from 'next'
-import { fetchPopularMovies, searchMovies } from '~/services/tmdbService'
+import { searchMovies } from '~/services/tmdbService/searchMovies'
+import { fetchPopularMovies } from '~/services/tmdbService/fetchPopularMovies'
 import { fetchWatchList } from '~/services/supabaseService/fetchWatchList'
 import { QueryParams } from '../interfaces/queryParams.interfce'
 import { Discover } from '../_views/discover'
@@ -15,6 +16,7 @@ const Home: NextPage<{
     searchParams.search?.length
       ? searchMovies(searchParams.search)
       : fetchPopularMovies(),
+    // fetchPopularTvShows(),
     fetchWatchList({
       searchPattern: searchParams.search,
     }),

@@ -1,4 +1,4 @@
 export enum WatchListType {
   MOVIE = 'movie',
-  TV = 'tv',
+  TV_SHOW = 'tv-show',
 }

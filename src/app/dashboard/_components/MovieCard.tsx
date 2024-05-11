@@ -22,18 +22,17 @@ export const MovieCard: FC<DashboardViewProps> = ({
     <Card variant="ghost">
       <Box position="relative" width="100%" pt="150%">
         <Image
-          loading="lazy"
+          sizes="100% 100%"
           style={{
             position: 'absolute',
             top: 0,
             left: 0,
-            width: '100%',
-            height: '100%',
+            objectFit: 'cover',
           }}
           src={posterPath}
           alt={title || 'Movie poster'}
+          priority
           fill
-          objectFit="cover"
         />
       </Box>
 

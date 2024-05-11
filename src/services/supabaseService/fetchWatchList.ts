@@ -1,12 +1,12 @@
-import { createServerActionClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Database } from '~/__generated__/supabase'
 import { WatchListStatus } from '~/app/api/movies-tv/watchlist/enums/watchListStatus.enum'
 import { WatchListType } from '~/app/api/movies-tv/watchlist/enums/watchListType.enum'
 import {
   FetchWatchListParams,
   FetchWatchListResponse,
-} from './interfaces/fetchWatchList.interface'
+} from './interfaces/fetchWatchlist.interface'
 
 const getStatusByWatclistItemFields = (
   watchlistItem: Database['public']['Tables']['user_watchlist']['Row'],
@@ -32,10 +32,11 @@ const getStatusByWatclistItemFields = (
 export const fetchWatchList = async ({
   searchPattern,
 }: FetchWatchListParams = {}): Promise<FetchWatchListResponse> => {
-  const supabase = createServerActionClient<Database>({
-    cookies: () => cookies(),
-  })
+  const cookieStore = cookies()
 
+  const supabase = createServerComponentClient<Database>({
+    cookies: () => cookieStore,
+  })
   const user = await supabase.auth.getUser()
 
   if (!user.data.user) {

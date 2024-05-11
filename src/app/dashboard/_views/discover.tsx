@@ -4,16 +4,15 @@ import { FC, useCallback } from 'react'
 import { Box, Flex, Grid } from '@radix-ui/themes'
 import debounce from 'lodash.debounce'
 import { useQueryParams } from '~/hooks/useQueryParams'
-import { addToWatchList } from '~/services/watchlistService'
-import { GetMoviesTvResponse, TMDBMovie } from '~/services/tmdbService'
-import { WatchListType } from '~/app/api/movies-tv/watchlist/enums/watchListType.enum'
 import { WatchListStatus } from '~/app/api/movies-tv/watchlist/enums/watchListStatus.enum'
+import { addToWatchList } from '~/services/watchlistService/addToWatchList'
+import { WatchlistItem } from '~/services/interfaces/watchlistItem.interface'
 import { QueryParams } from '../interfaces/queryParams.interfce'
 import { SearchField } from '../_components/searchField'
 import { MovieCard } from '../_components/MovieCard'
 
 interface DiscoverProps {
-  movies: GetMoviesTvResponse
+  movies: WatchlistItem[]
 }
 
 export const Discover: FC<DiscoverProps> = ({ movies }) => {
@@ -31,18 +30,21 @@ export const Discover: FC<DiscoverProps> = ({ movies }) => {
   )
 
   const onAddToWatchList = async (
-    movie: TMDBMovie,
+    watchlistItem: WatchlistItem,
     status: WatchListStatus
   ) => {
-    await addToWatchList(movie.id, {
+    if (!watchlistItem.tmdbId) {
+      return
+    }
+
+    await addToWatchList({
       status: status,
-      title: movie.title,
-      posterPath: movie.poster_path,
-      releaseDate: movie.release_date,
-      rating: movie.vote_average,
-      type: WatchListType.MOVIE,
-      genreIds: movie.genre_ids.map(String),
-      tmdbId: movie.id,
+      title: watchlistItem.title,
+      posterPath: watchlistItem.posterPath,
+      releaseDate: watchlistItem.releaseDate,
+      rating: watchlistItem.rating,
+      type: watchlistItem.type,
+      genreIds: watchlistItem.genreIds,
     })
   }
 
@@ -72,12 +74,12 @@ export const Discover: FC<DiscoverProps> = ({ movies }) => {
         pt={{ initial: '0', md: '5' }}
         columns={{ initial: '1', md: '2', lg: '3', xl: '5' }}
       >
-        {movies?.results?.map((movie) => {
+        {movies?.map((movie) => {
           return (
             <MovieCard
-              key={movie.id}
+              key={movie.tmdbId}
               title={movie.title}
-              posterPath={`https://image.tmdb.org/t/p/original/${movie.poster_path}`}
+              posterPath={`https://image.tmdb.org/t/p/original/${movie.posterPath}`}
               onWatchListAdd={(status) => {
                 onAddToWatchList(movie, status)
               }}
