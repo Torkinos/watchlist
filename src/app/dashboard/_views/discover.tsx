@@ -12,10 +12,10 @@ import { SearchField } from '../_components/searchField'
 import { MovieCard } from '../_components/MovieCard'
 
 interface DiscoverProps {
-  movies: WatchlistItem[]
+  watchlistItems: WatchlistItem[]
 }
 
-export const Discover: FC<DiscoverProps> = ({ movies }) => {
+export const Discover: FC<DiscoverProps> = ({ watchlistItems }) => {
   const { updateQueryParams, queryParams } = useQueryParams<QueryParams>()
 
   const onSearch = async (searchPattern: string) => {
@@ -38,13 +38,8 @@ export const Discover: FC<DiscoverProps> = ({ movies }) => {
     }
 
     await addToWatchList({
+      ...watchlistItem,
       status: status,
-      title: watchlistItem.title,
-      posterPath: watchlistItem.posterPath,
-      releaseDate: watchlistItem.releaseDate,
-      rating: watchlistItem.rating,
-      type: watchlistItem.type,
-      genreIds: watchlistItem.genreIds,
     })
   }
 
@@ -74,14 +69,14 @@ export const Discover: FC<DiscoverProps> = ({ movies }) => {
         pt={{ initial: '0', md: '5' }}
         columns={{ initial: '1', md: '2', lg: '3', xl: '5' }}
       >
-        {movies?.map((movie) => {
+        {watchlistItems?.map((watchlistItem) => {
           return (
             <MovieCard
-              key={movie.tmdbId}
-              title={movie.title}
-              posterPath={`https://image.tmdb.org/t/p/original/${movie.posterPath}`}
+              key={watchlistItem.tmdbId}
+              title={watchlistItem.title}
+              posterPath={`https://image.tmdb.org/t/p/original/${watchlistItem.posterPath}`}
               onWatchListAdd={(status) => {
-                onAddToWatchList(movie, status)
+                onAddToWatchList(watchlistItem, status)
               }}
             />
           )

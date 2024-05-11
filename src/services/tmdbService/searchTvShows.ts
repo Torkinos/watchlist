@@ -1,5 +1,6 @@
+import { tmdbTvShowToTvShow } from '~/utils/tmdbTvShowToTvShow'
 import { tmdbService, TMDB_BASE_PARAMS } from '.'
-import { TMDBItemResponse } from './interfaces/tmdbItem.interface'
+import { TMDBTvShowsResponse } from './interfaces/tmdbTvShow.interface'
 
 export const searchTvShows = async (searchPattern: string) => {
   const params = new URLSearchParams({
@@ -7,9 +8,9 @@ export const searchTvShows = async (searchPattern: string) => {
     query: searchPattern,
   })
 
-  const searchResults = await tmdbService.get<TMDBItemResponse>(
+  const searchResults = await tmdbService.get<TMDBTvShowsResponse>(
     `/search/tv?${params}`
   )
 
-  return searchResults.data
+  return searchResults.data.results.map((tvShow) => tmdbTvShowToTvShow(tvShow))
 }
