@@ -36,7 +36,7 @@ export const LogInForm: FC = () => {
     startTransition(async () => {
       const response = await signinAction(
         data,
-        `${location.origin}/auth/callback`
+        `${window.location.origin}/auth/callback`
       )
 
       if (response?.errors.email) {

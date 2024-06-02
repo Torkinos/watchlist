@@ -25,7 +25,7 @@ export const SearchField: FC<SearchFieldProps> = ({
     if (value !== searchPattern) {
       setSearchPattern(value)
     }
-  }, [value])
+  }, [])
 
   return (
     <TextField.Root
