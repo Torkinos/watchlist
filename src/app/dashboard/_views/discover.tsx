@@ -57,8 +57,9 @@ export const Discover: FC<DiscoverProps> = ({ watchlistItems }) => {
       </Flex>
 
       <Grid
+        mt={{ initial: '5', md: '0' }}
         gapX={{
-          initial: '0',
+          initial: '2',
           md: '9',
         }}
         gapY={{
@@ -66,8 +67,8 @@ export const Discover: FC<DiscoverProps> = ({ watchlistItems }) => {
           md: '9',
         }}
         px={{ initial: '4', md: '8' }}
-        pt={{ initial: '0', md: '5' }}
-        columns={{ initial: '1', md: '2', lg: '3', xl: '5' }}
+        pt={{ initial: '2', md: '5' }}
+        columns={{ initial: '2', lg: '3', xl: '5' }}
       >
         {watchlistItems?.map((watchlistItem) => {
           return (
@@ -78,6 +79,7 @@ export const Discover: FC<DiscoverProps> = ({ watchlistItems }) => {
               onWatchListAdd={(status) => {
                 onAddToWatchList(watchlistItem, status)
               }}
+              status={watchlistItem.status}
             />
           )
         })}

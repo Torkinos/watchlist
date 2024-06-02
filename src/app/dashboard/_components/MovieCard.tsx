@@ -2,7 +2,14 @@
 
 import { FC } from 'react'
 import Image from 'next/image'
-import { Box, Card, ContextMenu, Heading, IconButton } from '@radix-ui/themes'
+import {
+  Badge,
+  Box,
+  Card,
+  ContextMenu,
+  Heading,
+  IconButton,
+} from '@radix-ui/themes'
 import { PlusCircledIcon } from '@radix-ui/react-icons'
 import { ACCENT_COLOR } from '~/constants/theme'
 import { WatchListStatus } from '~/app/api/movies-tv/watchlist/enums/watchListStatus.enum'
@@ -10,14 +17,45 @@ import { WatchListStatus } from '~/app/api/movies-tv/watchlist/enums/watchListSt
 interface DashboardViewProps {
   title?: string
   posterPath: string
+  status?: WatchListStatus
   onWatchListAdd?: (status: WatchListStatus) => void
+  hasBadge?: boolean
 }
+
+const STATUS_OPTIONS: WatchListStatus[] = [
+  WatchListStatus.WATCHLIST,
+  WatchListStatus.WATCHING,
+  WatchListStatus.WATCHED,
+]
 
 export const MovieCard: FC<DashboardViewProps> = ({
   title,
   posterPath,
   onWatchListAdd,
+  status,
 }) => {
+  const getLabelByStatus = (status: WatchListStatus) => {
+    switch (status) {
+      case WatchListStatus.WATCHLIST:
+        return 'Want to watch'
+      case WatchListStatus.WATCHING:
+        return 'Watching'
+      case WatchListStatus.WATCHED:
+        return 'Done'
+    }
+  }
+
+  const getColorByStatus = (status: WatchListStatus) => {
+    switch (status) {
+      case WatchListStatus.WATCHLIST:
+        return 'blue'
+      case WatchListStatus.WATCHING:
+        return 'violet'
+      case WatchListStatus.WATCHED:
+        return 'green'
+    }
+  }
+
   return (
     <Card variant="ghost">
       <Box position="relative" width="100%" pt="150%">
@@ -36,8 +74,16 @@ export const MovieCard: FC<DashboardViewProps> = ({
         />
       </Box>
 
-      {!!onWatchListAdd && (
-        <Box position={'absolute'} top={'4'} right={'4'}>
+      <Box position={'absolute'} top={'4'} left={'4'}>
+        {status && (
+          <Badge variant="solid" color={getColorByStatus(status)}>
+            {getLabelByStatus(status)}
+          </Badge>
+        )}
+      </Box>
+
+      <Box position={'absolute'} top={'4'} right={'4'}>
+        {
           <ContextMenu.Root>
             <ContextMenu.Trigger>
               <IconButton size="1" variant="solid" color={ACCENT_COLOR}>
@@ -46,28 +92,30 @@ export const MovieCard: FC<DashboardViewProps> = ({
             </ContextMenu.Trigger>
 
             <ContextMenu.Content>
-              <ContextMenu.Item
-                onClick={() => onWatchListAdd?.(WatchListStatus.WATCHLIST)}
-              >
-                Want to watch
-              </ContextMenu.Item>
-              <ContextMenu.Item
-                onClick={() => onWatchListAdd?.(WatchListStatus.WATCHING)}
-              >
-                Watching
-              </ContextMenu.Item>
-              <ContextMenu.Item
-                onClick={() => onWatchListAdd?.(WatchListStatus.WATCHED)}
-              >
-                Done
-              </ContextMenu.Item>
+              {STATUS_OPTIONS.map((status) => {
+                return (
+                  <ContextMenu.Item
+                    key={status}
+                    onClick={() => onWatchListAdd?.(status)}
+                  >
+                    {getLabelByStatus(status)}
+                  </ContextMenu.Item>
+                )
+              })}
             </ContextMenu.Content>
           </ContextMenu.Root>
-        </Box>
-      )}
+        }
+      </Box>
 
-      <Box pt="2">
-        <Heading as="h2">{title}</Heading>
+      <Box p="2">
+        <Heading
+          as="h2"
+          style={{
+            fontWeight: 500,
+          }}
+        >
+          {title}
+        </Heading>
       </Box>
     </Card>
   )
