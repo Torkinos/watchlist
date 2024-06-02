@@ -37,6 +37,7 @@ export const fetchWatchList = async ({
   const supabase = createServerComponentClient<Database>({
     cookies: () => cookieStore,
   })
+
   const user = await supabase.auth.getUser()
 
   if (!user.data.user) {

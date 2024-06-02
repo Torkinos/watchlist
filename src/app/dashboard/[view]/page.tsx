@@ -1,4 +1,5 @@
 import { NextPage } from 'next'
+import { permanentRedirect } from 'next/navigation'
 import { searchMovies } from '~/services/tmdbService/searchMovies'
 import { fetchPopularMovies } from '~/services/tmdbService/fetchPopularMovies'
 import { fetchWatchList } from '~/services/supabaseService/fetchWatchList'
@@ -15,46 +16,50 @@ const Home: NextPage<{
   searchParams: QueryParams
   params: { view: DashboardPageView }
 }> = async ({ searchParams, params }) => {
-  const [movies, tvShows, watchlist] = await Promise.all([
-    searchParams.search?.length
-      ? searchMovies(searchParams.search)
-      : fetchPopularMovies(),
-    searchParams.search?.length
-      ? searchTvShows(searchParams.search)
-      : fetchPopularTvShows(),
-    fetchWatchList({
-      searchPattern: searchParams.search,
-    }),
-  ])
+  try {
+    const [movies, tvShows, watchlist] = await Promise.all([
+      searchParams.search?.length
+        ? searchMovies(searchParams.search)
+        : fetchPopularMovies(),
+      searchParams.search?.length
+        ? searchTvShows(searchParams.search)
+        : fetchPopularTvShows(),
+      fetchWatchList({
+        searchPattern: searchParams.search,
+      }),
+    ])
 
-  const statusesByTmdbId = watchlist.data.reduce<
-    Record<string, WatchListStatus>
-  >((acc, item) => {
-    if (item.tmdbId && item.status) {
-      acc[item.tmdbId] = item.status
-    }
+    const statusesByTmdbId = watchlist.data.reduce<
+      Record<string, WatchListStatus>
+    >((acc, item) => {
+      if (item.tmdbId && item.status) {
+        acc[item.tmdbId] = item.status
+      }
 
-    return acc
-  }, {})
+      return acc
+    }, {})
 
-  const watchlistItems = [...movies, ...tvShows].map((item) => ({
-    ...item,
-    status: item.tmdbId ? statusesByTmdbId[item.tmdbId] : undefined,
-  }))
+    const watchlistItems = [...movies, ...tvShows].map((item) => ({
+      ...item,
+      status: item.tmdbId ? statusesByTmdbId[item.tmdbId] : undefined,
+    }))
 
-  return (
-    <main>
-      <Header activeTab={params.view} />
+    return (
+      <main>
+        <Header activeTab={params.view} />
 
-      {params.view === DashboardPageView.DISCOVER && (
-        <Discover watchlistItems={watchlistItems} />
-      )}
+        {params.view === DashboardPageView.DISCOVER && (
+          <Discover watchlistItems={watchlistItems} />
+        )}
 
-      {params.view === DashboardPageView.WATCHLIST && (
-        <Watchlist watchlist={watchlist} />
-      )}
-    </main>
-  )
+        {params.view === DashboardPageView.WATCHLIST && (
+          <Watchlist watchlist={watchlist} />
+        )}
+      </main>
+    )
+  } catch (error) {
+    permanentRedirect('/log-in')
+  }
 }
 
 export default Home
