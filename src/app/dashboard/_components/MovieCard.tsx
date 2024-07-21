@@ -6,7 +6,7 @@ import {
   Badge,
   Box,
   Card,
-  ContextMenu,
+  DropdownMenu,
   Heading,
   IconButton,
 } from '@radix-ui/themes'
@@ -84,26 +84,26 @@ export const MovieCard: FC<DashboardViewProps> = ({
 
       <Box position={'absolute'} top={'4'} right={'4'}>
         {
-          <ContextMenu.Root>
-            <ContextMenu.Trigger>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
               <IconButton size="1" variant="solid" color={ACCENT_COLOR}>
                 <PlusCircledIcon height="16" width="16" />
               </IconButton>
-            </ContextMenu.Trigger>
+            </DropdownMenu.Trigger>
 
-            <ContextMenu.Content>
+            <DropdownMenu.Content>
               {STATUS_OPTIONS.map((status) => {
                 return (
-                  <ContextMenu.Item
+                  <DropdownMenu.Item
                     key={status}
                     onClick={() => onWatchListAdd?.(status)}
                   >
                     {getLabelByStatus(status)}
-                  </ContextMenu.Item>
+                  </DropdownMenu.Item>
                 )
               })}
-            </ContextMenu.Content>
-          </ContextMenu.Root>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
         }
       </Box>
 
